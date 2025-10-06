@@ -3,7 +3,7 @@ import { useState } from "react";
 import "./App.css";
 
 function Square({ value, onSquareClick, isWinningSquare }) {
-    // Task 4: When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw)
+    // Task 4: When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw): 1.8 points.
     return (
         <button className={`square ${isWinningSquare ? "winning" : ""}`} onClick={onSquareClick}>
             {value}
@@ -31,12 +31,13 @@ function Board({ xIsNext, squares, onPlay }) {
     if (winner && winner !== "Draw") {
         status = "Winner: " + winner;
     } else if (winner && winner === "Draw") {
+        // Task 4: When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw): 1.8 points.
         status = "It's a draw!";
     } else {
         status = "Next player: " + (xIsNext ? "X" : "O");
     }
 
-    // Task 2: Rewrite Board to use two loops to make the squares instead of hardcoding them.
+    // Task 2: Rewrite the Board to use two loops to make the squares instead of hardcoding them: 1.8 points.
     const renderBoard = () => {
         return Array(3)
             .fill(null)
@@ -101,31 +102,22 @@ export default function Game() {
     }
 
     const moves = history.map((squares, move) => {
-        let description;
-
-        // Task 1: For the current move only, show “You are at move #…” instead of a button.
-
-        // Task 5: Display the location for each move in the format (row, col) in the move history list
         const { row, col } = squares.moveIndex;
-
+        let description;
         if (move > 0 && move !== currentMove) {
-            description = "Go to move #" + move + " (" + row + ", " + col + ")";
+            // Task 5: Display the location for each move in the format (row, col) in the move history list: 1.8 points.
+            description = `Go to move #${move} (${row}, ${col})`;
         } else if (move === currentMove && move > 0) {
-            description = "You are at move #" + move + " (" + row + ", " + col + ")";
+            // Task 1: For the current move only, show “You are at move #…” instead of a button: 1.8 points.
+            description = `You are at move #${move} (${row}, ${col})`;
         } else {
             description = "Go to game start";
         }
+
         return (
             <li key={move}>
                 {move === currentMove && move > 0 ? (
-                    <span
-                        style={{
-                            cursor: "pointer",
-                        }}
-                        onClick={() => jumpTo(move)}
-                    >
-                        {description}
-                    </span>
+                    <span>{description}</span>
                 ) : (
                     <button onClick={() => jumpTo(move)}>{description}</button>
                 )}
@@ -133,8 +125,13 @@ export default function Game() {
         );
     });
 
-    // Task 3: Add a toggle button that lets you sort the moves in either ascending or descending order.
     const sortedMoves = isAscending ? moves : [moves[0], ...moves.slice(1).reverse()];
+
+    // Task 1: For the current move only, show “You are at move #…” instead of a button: 1.8 points.
+    const currentMoveInfo =
+        currentMove > 0
+            ? `You are at move #${currentMove} (${history[currentMove].moveIndex.row}, ${history[currentMove].moveIndex.col})`
+            : "You are at game start";
 
     return (
         <div className="game">
@@ -142,10 +139,15 @@ export default function Game() {
                 <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
             </div>
             <div className="game-info">
+                {/* Task 3: Add a toggle button that lets you sort the moves in either ascending or descending order: 1.8 points. */}
                 <button onClick={() => setIsAscending(!isAscending)}>
                     {isAscending ? "Sort Descending" : "Sort Ascending"}
                 </button>
-                <ol>{sortedMoves}</ol>
+
+                <div className="history-container">
+                    <ol>{sortedMoves}</ol>
+                    <div className="current-move-sticky">{currentMoveInfo}</div>
+                </div>
             </div>
         </div>
     );
@@ -170,6 +172,7 @@ function calculateWinner(squares) {
         }
     }
 
+    // Task 4: When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw): 1.8 points.
     if (squares.every((square) => square !== null)) {
         return ["Draw", null];
     }
